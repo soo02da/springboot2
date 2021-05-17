@@ -1,6 +1,7 @@
 package ne.kr.dev.springboot.web;
 
 import lombok.RequiredArgsConstructor;
+import ne.kr.dev.springboot.config.auth.LoginUser;
 import ne.kr.dev.springboot.config.auth.dto.SessionUser;
 import ne.kr.dev.springboot.service.PostsService;
 import ne.kr.dev.springboot.web.dto.PostsResponseDto;
@@ -18,11 +19,16 @@ public class IndexController {
     private final PostsService postsService;
     private final HttpSession httpSession;
 
+    /**
+     *
+     * @param model
+     * @param user WebMvcConfigurer 를 구현한 WebConfig 의 addArgumentResolvers
+     *             에서 어노테이션을 등록함으로서 컨트롤러에서 어노테이션으로 SessionUser 를 가져올 수 있도록 구현하였습니다
+     * @return
+     */
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, @LoginUser SessionUser user) {
         model.addAttribute("posts", postsService.findAllDesc());
-
-        SessionUser user = (SessionUser) httpSession.getAttribute("user");
 
         if (user != null) {
             model.addAttribute("userName", user.getName());
